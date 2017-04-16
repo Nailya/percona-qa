@@ -22,6 +22,13 @@ echo "$output"
   [ "$status" -eq 0 ]
 }
 
+@test "run pmm-admin show-passwords with stopped PMM server" {
+run sudo pmm-admin show-passwords
+  [ "$status" -eq 0 ]
+  echo  "$output" |grep  "HTTP basic auth"
+  echo  "$output" |grep  "MySQL"
+}
+
 @test "run pmm-admin restart --all" {
 run sudo pmm-admin restart --all
 echo "$output"
@@ -33,4 +40,16 @@ echo "$output"
 run sudo docker start pmm-server
 echo "$output"
   [ "$status" -eq 0 ]
+}
+
+@test "wait while PMM server starts" {
+run sleep 10
+  [ "$status" -eq 0 ]
+}
+
+@test "check that all services are running" {
+run sudo pmm-admin list
+echo "$output"
+  [ "$status" -eq 0 ]
+  echo  "${lines[10]}" |grep  "YES"
 }
