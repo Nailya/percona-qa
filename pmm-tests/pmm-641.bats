@@ -43,7 +43,69 @@ echo "$output"
 }
 
 @test "wait while PMM server starts" {
-run sleep 10
+run sleep 15
+  [ "$status" -eq 0 ]
+}
+
+@test "check that all services are running" {
+run sudo pmm-admin list
+echo "$output"
+  [ "$status" -eq 0 ]
+  echo  "${lines[10]}" |grep  "YES"
+}
+
+@test "stop PMM server" {
+run sudo docker stop pmm-server
+echo "$output"
+  [ "$status" -eq 0 ]
+}
+
+@test "run pmm-admin stop --all" {
+run sudo pmm-admin stop --all
+echo "$output"
+  [ "$status" -eq 0 ]
+  echo  "${lines[0]}" |grep  "OK, stop"
+}
+
+@test "start PMM server" {
+run sudo docker start pmm-server
+echo "$output"
+  [ "$status" -eq 0 ]
+}
+
+@test "wait while PMM server starts" {
+run sleep 15
+  [ "$status" -eq 0 ]
+}
+
+@test "check that all services are not running" {
+run sudo pmm-admin list
+echo "$output"
+  [ "$status" -eq 0 ]
+  echo  "${lines[10]}" |grep  "NO"
+}
+
+@test "stop PMM server" {
+run sudo docker stop pmm-server
+echo "$output"
+  [ "$status" -eq 0 ]
+}
+
+@test "run pmm-admin start --all" {
+run sudo pmm-admin start --all
+echo "$output"
+  [ "$status" -eq 0 ]
+  echo  "${lines[0]}" |grep  "OK, start"
+}
+
+@test "start PMM server" {
+run sudo docker start pmm-server
+echo "$output"
+  [ "$status" -eq 0 ]
+}
+
+@test "wait while PMM server starts" {
+run sleep 15
   [ "$status" -eq 0 ]
 }
 
